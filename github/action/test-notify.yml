@@ -1,0 +1,34 @@
+name: Test Notify Deploy Action
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-notify:
+    runs-on: ubuntu-latest
+    name: Test Deployment Notification
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Send deployment notification
+        uses: constellationio/notify-deploy@v1
+        with:
+          service: 'notify-deploy-test'
+          environment: 'dev'
+        env:
+          CONSTELLATION_API_KEY: ${{ secrets.CONSTELLATION_API_KEY }}
+      
+      - name: Report success
+        if: success()
+        run: echo "✅ Deployment notification sent successfully!"
+      
+      - name: Report failure
+        if: failure()
+        run: echo "❌ Deployment notification failed!"
